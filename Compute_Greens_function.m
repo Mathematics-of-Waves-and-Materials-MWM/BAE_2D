@@ -1,6 +1,6 @@
-clear all
+%clear all
 
-K = 0.3 + 0.01i;
+
 m = 101;
 n = 101;
 dtheta = 0.001;
@@ -30,28 +30,28 @@ for n_cur = 1 : n
     end
 end
 
-save('Green_function.mat','Greens_func','K')
+% save('Green_function.mat','Greens_func','K')
+
+% 
+% figure;
+% 
+% surf(imag(Greens_func))
+
+%% below some simple checks of accuracy of computations
 
 
-figure;
 
-surf(imag(Greens_func))
-
-%%
-
-
-
-m_cur = 3;
-n_cur = 4;
-
-Greens_asympt(K,m_cur,n_cur)
-
-Greens_func(m_cur+1,n_cur+1)
-
-(K^2-4)*Greens_func(m_cur,n_cur) + Greens_func(m_cur+1,n_cur)+Greens_func(m_cur-1,n_cur)...
-    +Greens_func(m_cur,n_cur-1) + Greens_func(m_cur,n_cur+1)
-
-(K^2-4)*Greens_func(1,1) + 2*Greens_func(2,1) + 2*Greens_func(1,2)
+% m_cur = 3;
+% n_cur = 4;
+% 
+% Greens_asympt(K,m_cur,n_cur)
+% 
+% Greens_func(m_cur+1,n_cur+1)
+% 
+% (K^2-4)*Greens_func(m_cur,n_cur) + Greens_func(m_cur+1,n_cur)+Greens_func(m_cur-1,n_cur)...
+%     +Greens_func(m_cur,n_cur-1) + Greens_func(m_cur,n_cur+1)
+% 
+% (K^2-4)*Greens_func(1,1) + 2*Greens_func(2,1) + 2*Greens_func(1,2)
 
 % 
 % figure;

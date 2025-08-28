@@ -62,13 +62,13 @@ con_indices = find(mask_con_up);
 
    num_nodes = size(node_coords,1);
 
-   figure;
-    patch('Faces', connectivity(mask_con_up,:), 'Vertices', node_coords, ...
-       'FaceColor', 'none', ...        % No face fill
-       'EdgeColor', 'k');              % Black edges
-   axis equal
-      hold all
-   plot(node_coords(mask_boundary,1),node_coords(mask_boundary,2),'r*')
+   % figure;
+   %  patch('Faces', connectivity(mask_con_up,:), 'Vertices', node_coords, ...
+   %     'FaceColor', 'none', ...        % No face fill
+   %     'EdgeColor', 'k');              % Black edges
+   % axis equal
+   %    hold all
+   % plot(node_coords(mask_boundary,1),node_coords(mask_boundary,2),'r*')
 end
 
 

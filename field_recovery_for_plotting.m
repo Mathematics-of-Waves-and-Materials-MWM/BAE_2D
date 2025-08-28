@@ -4,10 +4,9 @@
 % load("result.mat")
 % load('FEM_matrices.mat')
 
-n_cur = 2;
-sol = sol_ar(:,n_cur);
-s_in = s_ar(n_cur);
-q_in = q_ar(n_cur);
+sol = sol_star;
+s_in = s_star;
+q_in = q_star;
 uin = s_in.^(node_coords_boundary(:,1)).*q_in.^(node_coords_boundary(:,2));
 
 %% reassemble field for illustrations

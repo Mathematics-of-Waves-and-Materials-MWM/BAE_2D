@@ -9,6 +9,9 @@
 %% a square 
 
 
+%%%%% first we assemble a full square mesh with elements indexed in
+%%%%% counterclockwise order
+
 % size of the intial square/rectangular mesh
 n_x = 100; 
 n_y = 100; 
@@ -56,7 +59,12 @@ cur_num_square = 0;
 
 %axis equal;       % Keep aspect ratio
 
- %%% remove elements from the grid to get a square
+ %%% then the part of the grid that fall inside the obstacle boundary is
+ %%% removed. If the obstacle is infinitely thin than a cut is made along
+ %%% the boundary of the obstacle which disconnects the square elements on
+ %%% different sides of the obstacle
+ %%% The elements and nodes importart for BAE are indexed. They are
+ %%% adjacent connectivities, boundary nodes and adjacent nodes
 
  mask_squares = false(num_squares,1);
  mask_boundary = false(1,num_nodes);
@@ -103,7 +111,7 @@ mask_outer_nodes(mask_inner_nodes) = false(1,1);
 connectivity = connectivity(~mask_squares,:);
 
 
-%%%%% spliting nodes for open boundaries (like a strip, for example)
+%%%%% spliting nodes for infinitely thin  obstacles (like a strip, for example)
 
 node_splitting
 
@@ -130,9 +138,9 @@ num_nodes_adjacent = size(node_coords_adjacent,1);
    hold all
    plot(node_coords(mask_adjacent_boundary,1),node_coords(mask_adjacent_boundary,2),'go')
 
- save("mesh.mat", 'connectivity','node_coords','mask_boundary','num_nodes','mask_outer_nodes','mask_adjacent_boundary',...
-     "node_coords_boundary","num_nodes_boundary", "num_nodes_outer","node_coords_adjacent",...
-     "node_coords_outer","num_nodes_adjacent",'N_angles')
+ % save("mesh.mat", 'connectivity','node_coords','mask_boundary','num_nodes','mask_outer_nodes','mask_adjacent_boundary',...
+ %     "node_coords_boundary","num_nodes_boundary", "num_nodes_outer","node_coords_adjacent",...
+ %     "node_coords_outer","num_nodes_adjacent",'N_angles')
 
 
 

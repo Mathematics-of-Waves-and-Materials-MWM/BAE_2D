@@ -2,7 +2,7 @@
 % 
 % load('mesh.mat')
 % load('FEM_matrices.mat')
-load('Green_function.mat')
+%load('Green_function.mat')
 
 
 
@@ -88,7 +88,6 @@ end
 
 %%%%% one more computation for target value
 %%%%% incidence parameter to calculate
- beta_star = 0.9;
  theta_star = atan(beta_star);
  [s_star,q_star] = find_plane_wave_parameters(K,beta_star);
 uin = s_star.^(node_coords_boundary(:,1)).*q_star.^(node_coords_boundary(:,2));

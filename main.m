@@ -1,8 +1,10 @@
 %%%%% load the geometry of the obstacle
 input_geometry
 
- %body_boundary = square; %%%% a square obstacle
- % N_angles = 8; %%% number of independent solutions for embedding
+%%%%% sample geometries to choose
+
+%body_boundary = square; %%%% a square obstacle
+% N_angles = 8; %%% number of independent solutions for embedding
 
 % body_boundary = strip; %%%% a square obstacle
 % N_angles = 4; %%% number of independent solutions for embedding
@@ -13,6 +15,8 @@ input_geometry
   body_boundary = g_strip; %%%% a square obstacle
  N_angles = 6; %%% number of independent solutions for embedding
 
+
+
  %%%%%%% build a mesh; the obstacle should belong to domain [-50,50]x[-50,50]
 
  mesher
@@ -21,6 +25,14 @@ input_geometry
  %%%% Assemble FEM matrices K and M 
 
  Assemble_K_M
+
+ %%%%%%%%% set wavenumber
+ K = 0.3 + 0.01i;
+ %%%%%%% set incident parameter
+ beta_star = 0.9;
+
+ %%%%%% Compute free field Greens function
+ Compute_Greens_function
 
  %%% solve boundary algebraic equations
 

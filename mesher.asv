@@ -1,13 +1,16 @@
 %%% input geometry for BAE problem
 %%% two arrays connectivity and node_coords
-clear all
+% clear all
 
-input_geometry
+% input_geometry
 
-body_boundary = strip_boundary;
-N_angles = 4;
+% body_boundary = square;
+% N_angles = 8;
 %% a square 
 
+
+%%%%% first we assemble a full square mesh with elements indexed in
+%%%%% counterclockwise order
 
 % size of the intial square/rectangular mesh
 n_x = 100; 
@@ -28,7 +31,7 @@ cur_num_node = 0;
        end
    end 
 
-node_coords = node_coords - [45,45];   
+node_coords = node_coords - [50,50];   
 
 
 connectivity = zeros(num_squares , 4); 
@@ -48,15 +51,20 @@ cur_num_square = 0;
 
 
 
-   %%%% initial square grid
-   figure;
-   patch('Faces', connectivity, 'Vertices', node_coords, ...
-      'FaceColor', 'none', ...        % No face fill
-      'EdgeColor', 'k');              % Black edges
+   % %%%% initial square grid
+   % figure;
+   % patch('Faces', connectivity, 'Vertices', node_coords, ...
+   %    'FaceColor', 'none', ...        % No face fill
+   %    'EdgeColor', 'k');              % Black edges
 
-axis equal;       % Keep aspect ratio
+%axis equal;       % Keep aspect ratio
 
- %%% remove elements from the grid to get a square
+ %%% then the part of the grid that fall inside the obstacle boundary is
+ %%% removed. If the obstacle is infinitely thin than a cut is made along
+ %%% the boundary of the obstacle which disconnects the square elements on
+ %%% different sides of the obstacle
+ %%% The elements and nodes importart for BAE are indexed. They are
+ %%% adjacent connectivities, boundary nodes and adjacent nodes
 
  mask_squares = false(num_squares,1);
  mask_boundary = false(1,num_nodes);
@@ -79,7 +87,7 @@ axis equal;       % Keep aspect ratio
 %mask_adjacent_squares = ~mask_squares;
 
 
- boundary_idx_ar = zeros(1,size(b));
+ boundary_idx_ar = zeros(1,size(body_boundary,1));
 
  for n_cur = 1: size(body_boundary,1)
     cur_node = body_boundary(n_cur,:);
@@ -103,17 +111,17 @@ mask_outer_nodes(mask_inner_nodes) = false(1,1);
 connectivity = connectivity(~mask_squares,:);
 
 
+%%%%% spliting nodes for open boundaries (like a strip, for example)
+
+node_splitting
+
+
 node_coords_boundary = node_coords(mask_boundary,:);
 node_coords_adjacent = node_coords(mask_adjacent_boundary,:);
 node_coords_outer = node_coords(mask_outer_nodes,:);
 num_nodes_boundary = size(node_coords_boundary,1);
 num_nodes_outer = size(node_coords_outer,1);
 num_nodes_adjacent = size(node_coords_adjacent,1);
-
-%%%%% spliting nodes for open boundaries (like a strip, for example)
-
-node_splitting
-
 
    %%%% updated grid
    figure;
