@@ -1,0 +1,159 @@
+%%% input geometry for BAE problem
+%%% two arrays connectivity and node_coords
+% clear all
+
+% input_geometry
+
+% body_boundary = square;
+% N_angles = 8;
+%% a square 
+
+
+% size of the intial square/rectangular mesh
+n_x = 100; 
+n_y = 100; 
+
+num_squares = n_x * n_y;
+
+num_nodes = (n_x + 1) * (n_y + 1); 
+
+
+node_coords = zeros(num_nodes , 2); 
+cur_num_node = 0; 
+
+   for y_idx = 0: n_y 
+       for x_idx = 0:n_x
+          cur_num_node = cur_num_node+1;  
+           node_coords(cur_num_node , :) = [x_idx,y_idx];
+       end
+   end 
+
+node_coords = node_coords - [50,50];   
+
+
+connectivity = zeros(num_squares , 4); 
+cur_num_square = 0; 
+
+
+   for y_idx = 1:n_y
+       for x_idx = 1:n_x
+            cur_num_square = cur_num_square + 1;            
+            n1 = (y_idx-1) * (n_x + 1) + x_idx; 
+            n2 = (y_idx-1) * (n_x + 1) + x_idx + 1;
+            n3 = (y_idx  ) * (n_x + 1) + x_idx + 1; 
+            n4 = (y_idx  ) * (n_x + 1) + x_idx; 
+            connectivity(cur_num_square , :) = [n1,n2,n3,n4];          
+       end
+   end
+
+
+
+   % %%%% initial square grid
+   % figure;
+   % patch('Faces', connectivity, 'Vertices', node_coords, ...
+   %    'FaceColor', 'none', ...        % No face fill
+   %    'EdgeColor', 'k');              % Black edges
+
+%axis equal;       % Keep aspect ratio
+
+ %%% remove elements from the grid to get a square
+
+ mask_squares = false(num_squares,1);
+ mask_boundary = false(1,num_nodes);
+ mask_adjacent_squares = false(num_squares,1);
+ mask_inner_nodes = false(1,num_nodes);
+
+ for n_cur = 1:num_nodes
+     cur_node = node_coords(n_cur,:);
+     cur_state= is_inside_boundary(cur_node,body_boundary);
+     mask_inner_nodes(n_cur) = cur_state;
+     if (cur_state)
+         connectivity_dist = abs(connectivity - n_cur);
+         connectivity_dist = min(connectivity_dist,[],2);
+         mask_squares = mask_squares|connectivity_dist<0.5;
+     end
+ end
+
+%figure; plot(node_coords(mask_inner_nodes,1),node_coords(mask_inner_nodes,2),'*')
+
+%mask_adjacent_squares = ~mask_squares;
+
+
+ boundary_idx_ar = zeros(1,size(body_boundary,1));
+
+ for n_cur = 1: size(body_boundary,1)
+    cur_node = body_boundary(n_cur,:);
+    dist2 = (node_coords(:,1) - cur_node(1)).^2 + (node_coords(:,2) - cur_node(2)).^2;
+    [~,idx] = min(dist2);
+    boundary_idx_ar(n_cur) = idx;
+    mask_boundary(idx) = true;
+    connectivity_dist = abs(connectivity - idx);
+    connectivity_dist = min(connectivity_dist,[],2);
+    mask_adjacent_squares = mask_adjacent_squares|connectivity_dist<0.5;
+ end
+ mask_adjacent_squares = mask_adjacent_squares&~mask_squares;
+ mask_adjacent_boundary = connectivity(mask_adjacent_squares,:);
+ mask_adjacent_boundary = unique(mask_adjacent_boundary(:));
+
+
+
+mask_outer_nodes = true(num_nodes,1);
+mask_outer_nodes(mask_inner_nodes) = false(1,1);
+
+connectivity = connectivity(~mask_squares,:);
+
+
+%%%%% spliting nodes for open boundaries (like a strip, for example)
+
+node_splitting
+
+
+node_coords_boundary = node_coords(mask_boundary,:);
+node_coords_adjacent = node_coords(mask_adjacent_boundary,:);
+node_coords_outer = node_coords(mask_outer_nodes,:);
+num_nodes_boundary = size(node_coords_boundary,1);
+num_nodes_outer = size(node_coords_outer,1);
+num_nodes_adjacent = size(node_coords_adjacent,1);
+
+   %%%% updated grid
+   figure;
+    patch('Faces', connectivity, 'Vertices', node_coords, ...
+       'FaceColor', 'none', ...        % No face fill
+       'EdgeColor', 'k');              % Black edges
+ 
+ axis equal;       % Keep aspect ratio
+
+   hold all
+   plot(node_coords(mask_boundary,1),node_coords(mask_boundary,2),'r*')
+   hold all
+   plot(node_coords(mask_outer_nodes,1),node_coords(mask_outer_nodes,2),'bx')
+   hold all
+   plot(node_coords(mask_adjacent_boundary,1),node_coords(mask_adjacent_boundary,2),'go')
+
+ save("mesh.mat", 'connectivity','node_coords','mask_boundary','num_nodes','mask_outer_nodes','mask_adjacent_boundary',...
+     "node_coords_boundary","num_nodes_boundary", "num_nodes_outer","node_coords_adjacent",...
+     "node_coords_outer","num_nodes_adjacent",'N_angles')
+
+
+
+ %%% remove elements from the grid to get a square
+
+
+% 
+% for n_cur = 1:num_squares
+%     cur_nodes = connectivity(n_cur,:);
+%     cur_coords = node_coords(cur_nodes,:);
+%     maskx1 = cur_coords(:,1)>1.5&cur_coords(:,1)<8.5;
+%     masky1 = cur_coords(:,2)>1.5&cur_coords(:,2)<8.5;
+%     if sum(maskx1&masky1)>0
+%     mask_squares(n_cur,:) = false(1,1);
+%     mask_inner_nodes = [mask_inner_nodes,cur_nodes];
+%     else
+%     maskx2 = cur_coords(:,1)>0.5&cur_coords(:,1)<9.5;
+%     masky2 = cur_coords(:,2)>0.5&cur_coords(:,2)<9.5;
+%     mask_boundary = [mask_boundary,cur_nodes(maskx2&masky2)];
+%     if(~isempty(cur_nodes(maskx2&masky2)))
+%     mask_adjacent_boundary = [mask_adjacent_boundary,cur_nodes];
+%     end
+%     end
+% end

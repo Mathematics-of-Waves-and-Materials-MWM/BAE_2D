@@ -1,0 +1,29 @@
+
+
+%%%% square 
+
+first_side = [-5:5; -5*ones(1,11)];
+second_side = [5*ones(1,11);-5:5];
+third_side = [5:-1:-5;5*ones(1,11)];
+fourth_side = [-5*ones(1,11);5:-1:-5];
+
+square_boundary  = [first_side,second_side,third_side,fourth_side].';
+
+% figure;
+% plot(square_boundary(:,1),square_boundary(:,2),'*')
+
+%%%%%% strip
+
+strip_boundary = first_side.';
+
+
+%%%%%% P-shaped figure 
+third_side = first_side+[10,10];
+fourth_side = [16*ones(1,11);5:-1:-5];
+fifth_side = 
+
+P_figure_boundary = [first_side,second_side,third_side,]
+
+
+%%%%% G-shaped strip
+
