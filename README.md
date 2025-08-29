@@ -1,6 +1,4 @@
----
-mathjax: true
----
+
 It is a FEM based MATLAB realisation of the method of boundary algebraic equations for the Helmholtz equation on a square lattice. For a quick start, just launch *main.m*. Below we briefly discuss the theory behind the code, followed by a  description of the structure of the MATLAB scripts. For a detailed description of the theory, the reader is referred to 
 
 1. Korolkov, A. I., & Kisil, A. V. (2024). Embedding formulae for diffraction problems on square lattices. arXiv. [ArXiv]()
