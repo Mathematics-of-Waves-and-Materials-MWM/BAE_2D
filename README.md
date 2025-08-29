@@ -120,13 +120,13 @@ Script *main.m* launches everything that is needed to solve the diffraction prob
 
 
 <p align="center">
-<img src="square_field.png" alt="Solution" width="400" style="display: block; margin: 100 auto;"/>
+<img src="square_field.png" alt="Solution" width="500" style="display: block; margin: 100 auto;"/>
 </p>
 
 <p align="center">
-<img src="angle_field.png" alt="Solution" width="400" style="display: block; margin: 100 auto;"/>
+<img src="angle_field.png" alt="Solution" width="500" style="display: block; margin: 100 auto;"/>
 </p>
 
 <p align="center">
-<img src="P_field.png" alt="Solution" width="400" style="display: block; margin: 100 auto;"/>
+<img src="P_field.png" alt="Solution" width="500" style="display: block; margin: 100 auto;"/>
 </p>
