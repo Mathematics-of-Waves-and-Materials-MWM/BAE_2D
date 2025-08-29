@@ -37,7 +37,7 @@ end
 
 Emat(Emat>0) = 1;
 
-%%%% Kbound and Mbound are used to construct BAE equations
+%%%% Matrices below are used to construct BAE equations
 Kbound = Kmat(mask_boundary,mask_adjacent_boundary);
 Mbound = Mmat(mask_boundary,mask_adjacent_boundary);
 

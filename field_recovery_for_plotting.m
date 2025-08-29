@@ -9,7 +9,7 @@ s_in = s_star;
 q_in = q_star;
 uin = s_in.^(node_coords_boundary(:,1)).*q_in.^(node_coords_boundary(:,2));
 
-%% reassemble field for illustrations
+%% reassemble field for illustrations using field recovery formula
 
 scat_field = Afull*sol + Afull_adj.'*(Kbound + K^2*Mbound).'*uin;
 
@@ -21,7 +21,11 @@ pressure(mask_boundary) = -uin;
 
 uin_everywhere = s_in.^(node_coords(:,1)).*q_in.^(node_coords(:,2));
 
+%%%%% total field
+
 pressure = pressure + uin_everywhere;
+
+%%%%% plot some nice figures;
 
 fig = figure;
 patch('Faces', connectivity, 'Vertices', node_coords, 'FaceVertexCData', real(pressure), ...
@@ -35,8 +39,11 @@ axis equal
  ylabel('$n$',FontSize=16,Interpreter='latex')
  colorbar
 
- % exportgraphics(fig, 'field.pdf', ...
- %    'ContentType', 'vector')
+  % exportgraphics(fig, 'field.pdf', ...
+  %    'ContentType', 'vector')
+
+
+%%%%%% check that field satisfies Helmhotlz equation and boundary conditions 
 
 Kmat(mask_boundary,:)=0;
 Mmat(mask_boundary,:)=0;
@@ -58,7 +65,7 @@ delta = (Kmat + K^2*Mmat)*pressure;
 
 %
 
-%% embedding games
+%% embedding games (can be omitted)
 % 
  Hp = Emat*pressure - (s_in + 1/s_in)*pressure;
 % 

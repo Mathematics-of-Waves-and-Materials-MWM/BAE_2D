@@ -7,7 +7,8 @@
 
 
 
-%%% Assemble propagator matrix
+%%% Assemble propagator matrix, i.e. a matrix composed of free field Greens
+%%% functions
 
 Amat = zeros(num_nodes_boundary);
 Amat_adjacent = zeros(num_nodes_adjacent,num_nodes_boundary);
@@ -30,7 +31,7 @@ for n_cur = 1:num_nodes_boundary
     
 end
 
- %%% recover the field everywhere 
+ %%% Propagator for field recovery formula
 
 Afull_adj = zeros(num_nodes_adjacent,num_nodes_outer);
 
@@ -49,7 +50,7 @@ cur_nodes = abs(node_coords_boundary(:,:)) + ones(num_nodes_boundary,2);
 linear_idx = sub2ind(size(Amat), cur_nodes(:, 1), cur_nodes(:, 1));
 G_rhs = Greens_func(linear_idx);
 
-%% incidence parameters beta s_in q_in
+%% Solve BAE for N_angles incident waves for embedding formula
 %N_angles = 8;
 dtheta_ar = pi/2/N_angles; 
 theta_ar_in = 0.1:dtheta_ar:pi/2;
@@ -59,6 +60,7 @@ beta_ar = tan(theta_ar_in);
 sol_ar = zeros(num_nodes_boundary,N_angles);
 s_ar = zeros(1,N_angles);
 q_ar = zeros(1,N_angles);
+
 for n_cur = 1:N_angles
 
 [s1_in,s2_in,s3_in,s4_in] = saddle_points_torus(K,beta_ar(n_cur));
@@ -80,14 +82,16 @@ q_ar(n_cur) = q_in;
 
 uin = s_in.^(node_coords_boundary(:,1)).*q_in.^(node_coords_boundary(:,2));
 
+%%%%%%% rhs of BAE equation
 F_ar = - Amat_adjacent.'*(Kbound + K^2*Mbound).'*uin;
 
+%%%%%%% solution of BAE equation
 sol_ar(:,n_cur) = Amat\F_ar;
 
 end
 
-%%%%% one more computation for target value
-%%%%% incidence parameter to calculate
+%%%%%%% Additional solution for plane wave incindence to compare with
+%%%%%%% embedding formula
  theta_star = atan(beta_star);
  [s_star,q_star] = find_plane_wave_parameters(K,beta_star);
 uin = s_star.^(node_coords_boundary(:,1)).*q_star.^(node_coords_boundary(:,2));
@@ -97,8 +101,8 @@ F_ar = - Amat_adjacent.'*(Kbound + K^2*Mbound).'*uin;
 sol_star = Amat\F_ar;
 
 
- save('result','sol_ar','K','beta_ar','Afull_adj','Afull','q_ar','s_ar',...
-     'theta_ar_in','N_angles','s_star','q_star','beta_star','theta_star','sol_star')
+% save('result','sol_ar','K','beta_ar','Afull_adj','Afull','q_ar','s_ar',...
+%     'theta_ar_in','N_angles','s_star','q_star','beta_star','theta_star','sol_star')
 
 
 

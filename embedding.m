@@ -4,6 +4,10 @@
 % load("result.mat")
 % load('FEM_matrices.mat')
 
+
+
+%%%% This script calculates directivity using embedding formula and
+%%%% compares the result with direct computation
 %% Compute directivity
 
 theta_ar_obs = 0.015:0.017:pi/2-0.015;
@@ -43,6 +47,9 @@ end
  
 
    phase = s_ar_obs.^(node_coords_boundary(:,1)).* q_ar_obs.^(node_coords_boundary(:,2));
+   
+   %%%%%%%%% Compute directivity using spectral relation with the field on
+   %%%%%%%%% the obstacle surface
 
    Directivities= sol_ar.'*phase;
 
@@ -58,6 +65,7 @@ end
  tildeDirectivities = 0*Directivities;
 
 %%%% let's do some interpolation
+%%%% and compute coefficients for embedding formula
 
 Coeffs = zeros(N_angles,N_angles);
 rhs = zeros(N_angles,1);
@@ -72,6 +80,7 @@ for n_cur = 1: N_angles
         s_cur = s_ar(m_cur);
         cur_factor = (s_cur + 1/s_cur- s_cur_in - 1/s_cur_in);
         cur_Dir = interp1(theta_ar_obs,Directivities(n_cur,:),theta_ar_in(m_cur));
+        %%%%%%% coefficients for embedding
         Coeffs(m_cur,n_cur) = cur_factor*cur_Dir;
     end
     tildeDirectivities(n_cur,:) = (s_ar_obs + 1./s_ar_obs - s_ar(n_cur) - 1/s_ar(n_cur)).*Directivities(n_cur,:);
@@ -85,8 +94,10 @@ tildeDir_star = (s_ar_obs + 1./s_ar_obs - s_star - 1/s_star).*Dir_star;
 Coeffs_embed = Coeffs\rhs;
 
 
-
+%%%%%%%%%% Embedding formula
 tildeDir_star_embed = (ones(1,N_angles)*(tildeDirectivities.*repmat(Coeffs_embed,1,N_angles_obs)));
+
+%%%%% Check embedding formula visually
 
   fig = figure;
    plot(beta_ar_obs,real(tildeDir_star_embed),'*')

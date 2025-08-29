@@ -1,5 +1,9 @@
 %clear all
 
+%%%%% Greens function is evaluated by direct evaluation of the contour
+%%%%% integral. The accuracy can be improved by contour deformation in the
+%%%%% steepest descent contour
+%%%%% Will fail for real K as branch points will hit the contour
 
 m = 101;
 n = 101;
