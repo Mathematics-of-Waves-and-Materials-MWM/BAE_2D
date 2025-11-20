@@ -1,0 +1,13 @@
+mr = 95;
+nr = 0;
+
+for nr = 0: 95
+
+idx = node_coords_outer(:,1)==mr&node_coords_outer(:,2)==nr;
+
+S = [S,scat_field(idx)/Greens_func(mr+1,nr+1)];
+end
+
+figure; 
+plot(abs(S))
+
