@@ -1,8 +1,9 @@
-
+%%%%%  Data are stored as cell array with each cell containing a boundary
+%%%%%  connectivity for each obstacle
 
 %%%% square
 
-N_p = 20;
+N_p = 10;
 
 first_side = [-N_p:N_p; -N_p*ones(1,2*N_p+1)];
 second_side = [N_p*ones(1,2*N_p+1);-N_p:N_p];
@@ -11,12 +12,16 @@ fourth_side = [-N_p*ones(1,2*N_p+1);N_p:-1:-N_p];
 
 square  = [first_side,second_side,third_side,fourth_side].';
 
+geometry_square{1} = square;
+
 % figure;
 % plot(square_boundary(:,1),square_boundary(:,2),'*')
 
 %%%%%% strip
 
 strip = first_side.';
+
+geometry_strip{1} = strip;
 
 %strip_boundary = second_side.';
 
@@ -30,12 +35,60 @@ sixth_side_p = second_side_p + [-10;-10];
 
 P_figure = [first_side_p,second_side_p,third_side_p,fourth_side_p,...
     fifth_side_p,sixth_side_p].';
+
+geometry_P_figure{1} = P_figure;
  % figure;
- % plot(P_figure(:,1),P_figure(:,2),'*')
+ % plot(P_figure(:,1),P_figure(:,2),'*') 
 
 %%%%% G-shaped strip
 
-g_strip = unique([first_side,second_side].','rows');
+g_strip = unique([first_side,second_side].','rows','stable');
+
+geometry_g_strip{1} = g_strip;
 
   % figure;
   % plot(g_strip(:,1),g_strip(:,2),'*')
+  
+  N_obstacles = 9;
+
+%%%%% grid of 9 squares  
+
+ geometry_square_grid = cell(1,N_obstacles);
+
+  shift_ar =  [-50,0;
+                0,0;
+                50,0;
+                -50,50;
+                0,50;
+                50,50;
+                -50,-50;
+                0,-50;
+                50,-50]; 
+
+  % figure;
+  % hold all
+  % axis equal
+  for n_cur = 1: N_obstacles
+      cur_square = square + shift_ar(n_cur,:);
+      geometry_square_grid{n_cur} = cur_square;
+%      plot(cur_square(:,1),cur_square(:,2))
+  end
+
+
+  %%%% open resonator
+
+  N_p = 20;
+
+  first_side = [N_p*ones(1,N_p+1);N_p/2:-1:-N_p/2];
+second_side = [N_p:-1:-N_p;-N_p/2*ones(1,2*N_p+1)];
+third_side = [-N_p*ones(1,N_p+1);-N_p/2:N_p/2];
+fourth_side = [-N_p:N_p-10;N_p/2*ones(1,2*N_p+1-10)];
+
+open_square  = [first_side,second_side,third_side,fourth_side];
+ open_square = unique(open_square.' ,'rows','stable');
+  % figure;
+  % plot(open_square(:,1),open_square(:,2),'-') 
+
+
+
+  geometry_open_square{1} = open_square;

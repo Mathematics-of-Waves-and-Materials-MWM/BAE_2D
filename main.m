@@ -1,3 +1,4 @@
+clear all
 %%%%%%%%% Launches all the scripts alltogether
 %%%%% Note that some of the scripts could be launched only once
 
@@ -6,17 +7,23 @@ input_geometry
 
 %%%%% sample geometries to choose
 
-body_boundary = square; %%%% a square obstacle
-N_angles = 8; %%% number of independent solutions for embedding
+ geometry = geometry_square; %%%% a square obstacle
+ N_angles = 8; %%% number of independent solutions for embedding
 
-% body_boundary = strip; %%%% a square obstacle
+% geometry = geometry_strip; %%%% a strip
 % N_angles = 4; %%% number of independent solutions for embedding
 
-% body_boundary = P_figure; %%%% a square obstacle
+% geometry = geometry_P_figure; %%%% a P shaped figure
 % N_angles = 10; %%% number of independent solutions for embedding
 
-%  body_boundary = g_strip; %%%% a square obstacle
+% geometry = geometry_g_strip; %%%% g-shaped thin line
 % N_angles = 6; %%% number of independent solutions for embedding
+
+% geometry = geometry_square_grid; %%%% a grid of 9 squares
+% N_angles = 9*8; %%% number of independent solutions for embedding
+
+% geometry = geometry_open_square; %%%% a grid of 9 squares
+% N_angles = 10; %%% number of independent solutions for embedding
 
 
 
@@ -32,12 +39,14 @@ N_angles = 8; %%% number of independent solutions for embedding
  %%%%%%%%% set wavenumber
  K = 0.3 + 0.01i;
  %%%%%%% set incident parameter (cotanget of the angle of incidence)
- beta_star = 0.9;
+
 
  %%%%%% Compute free field Greens function
  Compute_Greens_function
 
  %%% solve boundary algebraic equations
+
+ beta_star = 0.9;
 
  solver
 

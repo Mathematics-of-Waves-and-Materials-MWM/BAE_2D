@@ -31,6 +31,8 @@ for n_cur = 1:num_nodes_boundary
     
 end
 
+
+
  %%% Propagator for field recovery formula
 
 Afull_adj = zeros(num_nodes_adjacent,num_nodes_outer);
@@ -46,14 +48,14 @@ Afull_adj = zeros(num_nodes_adjacent,num_nodes_outer);
 %%% Assemble rhs matrices
 
 
-cur_nodes = abs(node_coords_boundary(:,:)) + ones(num_nodes_boundary,2);
-linear_idx = sub2ind(size(Amat), cur_nodes(:, 1), cur_nodes(:, 1));
-G_rhs = Greens_func(linear_idx);
+% cur_nodes = abs(node_coords_boundary(:,:)) + ones(num_nodes_boundary,2);
+% linear_idx = sub2ind(size(Amat), cur_nodes(:, 1), cur_nodes(:, 2));
+% G_rhs = Greens_func(linear_idx);
 
 %% Solve BAE for N_angles incident waves for embedding formula
 %N_angles = 8;
-dtheta_ar = pi/2/N_angles; 
-theta_ar_in = 0.1:dtheta_ar:pi/2;
+dtheta_ar = (pi/2-0.21)/N_angles; 
+theta_ar_in = 0.11:dtheta_ar:(pi/2-0.1);
 
 beta_ar = tan(theta_ar_in);
 
@@ -68,6 +70,7 @@ for n_cur = 1:N_angles
 s_ar_cur = [s1_in,s2_in,s3_in,s4_in];
 
 s_in = s_ar_cur(abs(s_ar_cur)>1&abs(s_ar_cur)<1.2);
+s_in = s_in(1);
 
 q_in = -(K^2 - 4 + s_in + 1./s_in)/2 + sqrt((K^2-4+s_in + 1./s_in).^2 - 4)/2;
 
@@ -86,7 +89,9 @@ uin = s_in.^(node_coords_boundary(:,1)).*q_in.^(node_coords_boundary(:,2));
 F_ar = - Amat_adjacent.'*(Kbound + K^2*Mbound).'*uin;
 
 %%%%%%% solution of BAE equation
-sol_ar(:,n_cur) = Amat\F_ar;
+%sol_ar(:,n_cur) = Amat\F_ar;
+
+sol_ar(:,n_cur) = lsqminnorm(Amat, F_ar, 0.01);
 
 end
 
@@ -98,8 +103,9 @@ uin = s_star.^(node_coords_boundary(:,1)).*q_star.^(node_coords_boundary(:,2));
 
 F_ar = - Amat_adjacent.'*(Kbound + K^2*Mbound).'*uin;
 
-sol_star = Amat\F_ar;
+%sol_star = Amat\F_ar;
 
+sol_star = lsqminnorm(Amat, F_ar, 0.01);
 
 % save('result','sol_ar','K','beta_ar','Afull_adj','Afull','q_ar','s_ar',...
 %     'theta_ar_in','N_angles','s_star','q_star','beta_star','theta_star','sol_star')

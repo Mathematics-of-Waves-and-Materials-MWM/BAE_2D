@@ -25,14 +25,14 @@ uin_everywhere = s_in.^(node_coords(:,1)).*q_in.^(node_coords(:,2));
 
 pressure = pressure + uin_everywhere;
 
-%%%%% plot some nice figures;
+%% plot some nice figures;
 
 fig = figure;
 patch('Faces', connectivity, 'Vertices', node_coords, 'FaceVertexCData', real(pressure), ...
       'FaceColor', 'interp');
 axis equal
    hold all
-   plot(node_coords(boundary_idx_ar,1),node_coords(boundary_idx_ar,2),'k-','LineWidth',2)
+   plot(node_coords(mask_boundary,1),node_coords(mask_boundary,2),'k.','LineWidth',4)
  shading interp
  title('${\rm Re}[u]$',FontSize=18,Interpreter='latex')
  xlabel('$m$',FontSize=16,Interpreter='latex')
@@ -53,23 +53,23 @@ delta = (Kmat + K^2*Mmat)*pressure;
 
 %%%% delta = (Kmat + K^2*Mmat)*uin_everywhere;
 
-
- % figure;
- % patch('Faces', connectivity, 'Vertices', node_coords, 'FaceVertexCData', abs(delta), ...
- %       'FaceColor', 'interp');
- % axis equal
- %    hold all
- %    plot(node_coords(mask_boundary,1),node_coords(mask_boundary,2),'r*')
-
-% figure; plot(sort(abs(delta(mask_outer_nodes))))
+%%
+ figure;
+ patch('Faces', connectivity, 'Vertices', node_coords, 'FaceVertexCData', abs(delta), ...
+       'FaceColor', 'interp');
+ axis equal
+    hold all
+  %  plot(node_coords(mask_boundary,1),node_coords(mask_boundary,2),'r*')
+ % 
+  figure; plot(sort(abs(delta(mask_outer_nodes))))
 
 %
 
 %% embedding games (can be omitted)
 % 
- Hp = Emat*pressure - (s_in + 1/s_in)*pressure;
-% 
- delta = (Kmat + K^2*Mmat)*Hp;
+%  Hp = Emat*pressure - (s_in + 1/s_in)*pressure;
+% % 
+%  delta = (Kmat + K^2*Mmat)*Hp;
 
 
 % figure;

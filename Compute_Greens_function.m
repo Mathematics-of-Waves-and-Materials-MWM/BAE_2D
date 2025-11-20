@@ -5,8 +5,8 @@
 %%%%% steepest descent contour
 %%%%% Will fail for real K as branch points will hit the contour
 
-m = 101;
-n = 101;
+m = 201;
+n = 201;
 dtheta = 0.001;
 
 
@@ -44,9 +44,9 @@ end
 %% below some simple checks of accuracy of computations
 
 
-
-% m_cur = 3;
-% n_cur = 4;
+% 
+% m_cur = 190;
+% n_cur = 190;
 % 
 % Greens_asympt(K,m_cur,n_cur)
 % 
@@ -57,7 +57,7 @@ end
 % 
 % (K^2-4)*Greens_func(1,1) + 2*Greens_func(2,1) + 2*Greens_func(1,2)
 
-% 
+
 % figure;
 % plot(s_ar)
 % axis equal

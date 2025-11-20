@@ -13,8 +13,9 @@
 %%%%% counterclockwise order
 
 % size of the intial square/rectangular mesh
-n_x = 100; 
-n_y = 100; 
+
+n_x = 200; 
+n_y = 200; 
 
 num_squares = n_x * n_y;
 
@@ -31,7 +32,7 @@ cur_num_node = 0;
        end
    end 
 
-node_coords = node_coords - [50,50];   
+node_coords = node_coords - [n_x,n_y]/2;   
 
 
 connectivity = zeros(num_squares , 4); 
@@ -66,56 +67,82 @@ cur_num_square = 0;
  %%% The elements and nodes importart for BAE are indexed. They are
  %%% adjacent connectivities, boundary nodes and adjacent nodes
 
- mask_squares = false(num_squares,1);
- mask_boundary = false(1,num_nodes);
- mask_adjacent_squares = false(num_squares,1);
- mask_inner_nodes = false(1,num_nodes);
+  mask_squares = false(num_squares,1);
+  mask_boundary = false(1,num_nodes);
+  mask_adjacent_squares = false(num_squares,1);
+  mask_inner_nodes = false(1,num_nodes);
+  mask_adjacent_boundary = [];
+ %%%%%% Let us go over each obstacle one by one
 
- for n_cur = 1:num_nodes
-     cur_node = node_coords(n_cur,:);
-     cur_state= is_inside_boundary(cur_node,body_boundary);
-     mask_inner_nodes(n_cur) = cur_state;
-     if (cur_state)
-         connectivity_dist = abs(connectivity - n_cur);
-         connectivity_dist = min(connectivity_dist,[],2);
-         mask_squares = mask_squares|connectivity_dist<0.5;
+ for l_cur = 1:length(geometry)
+
+
+     cur_mask_squares = false(num_squares,1);
+     cur_mask_boundary = false(1,num_nodes);
+     cur_mask_adjacent_squares = false(num_squares,1);
+     cur_mask_inner_nodes = false(1,num_nodes);
+     cur_mask_outer_nodes = true(num_nodes,1);
+
+     body_boundary = geometry{l_cur};
+
+     for n_cur = 1:num_nodes
+         cur_node = node_coords(n_cur,:);
+         cur_state= is_inside_boundary(cur_node,body_boundary);
+         cur_mask_inner_nodes(n_cur) = cur_state;
+         if (cur_state)
+             connectivity_dist = abs(connectivity - n_cur);
+             connectivity_dist = min(connectivity_dist,[],2);
+             cur_mask_squares = cur_mask_squares|connectivity_dist<0.5;
+         end
      end
+    
+    %figure; plot(node_coords(mask_inner_nodes,1),node_coords(mask_inner_nodes,2),'*')
+    
+    %mask_adjacent_squares = ~mask_squares;
+      % cur_mask_squares = false(num_squares,1);
+      % cur_mask_boundary = false(1,num_nodes);
+      % cur_mask_adjacent_squares = false(num_squares,1);
+      % cur_mask_inner_nodes = false(1,num_nodes);
+      % cur_mask_outer_nodes = true(num_nodes,1);
+    
+     boundary_idx_ar = zeros(1,size(body_boundary,1));
+    
+     for n_cur = 1: size(body_boundary,1)
+        cur_node = body_boundary(n_cur,:);
+        dist2 = (node_coords(:,1) - cur_node(1)).^2 + (node_coords(:,2) - cur_node(2)).^2;
+        [~,idx] = min(dist2);
+        boundary_idx_ar(n_cur) = idx;
+        cur_mask_boundary(idx) = true;
+        connectivity_dist = abs(connectivity - idx);
+        connectivity_dist = min(connectivity_dist,[],2);
+        cur_mask_adjacent_squares = cur_mask_adjacent_squares|connectivity_dist<0.5;
+     end
+     cur_mask_adjacent_squares = cur_mask_adjacent_squares&~cur_mask_squares;
+     cur_mask_adjacent_boundary = connectivity(cur_mask_adjacent_squares,:);
+     cur_mask_adjacent_boundary = unique(cur_mask_adjacent_boundary(:));
+    
+    
+    
+    
+    cur_mask_outer_nodes(cur_mask_inner_nodes) = false(1,1);
+    
+    
+    
+    
+    %%%%% spliting nodes for infinitely thin  obstacles (like a strip, for example)
+    
+    node_splitting
+
+     mask_squares = mask_squares|cur_mask_squares; 
+     mask_boundary = mask_boundary|cur_mask_boundary; 
+     mask_adjacent_squares = mask_adjacent_squares|cur_mask_adjacent_squares;
+     mask_inner_nodes = mask_inner_nodes |cur_mask_inner_nodes; 
+     mask_adjacent_boundary = [mask_adjacent_boundary;cur_mask_adjacent_boundary];
+
  end
 
-%figure; plot(node_coords(mask_inner_nodes,1),node_coords(mask_inner_nodes,2),'*')
-
-%mask_adjacent_squares = ~mask_squares;
-
-
- boundary_idx_ar = zeros(1,size(body_boundary,1));
-
- for n_cur = 1: size(body_boundary,1)
-    cur_node = body_boundary(n_cur,:);
-    dist2 = (node_coords(:,1) - cur_node(1)).^2 + (node_coords(:,2) - cur_node(2)).^2;
-    [~,idx] = min(dist2);
-    boundary_idx_ar(n_cur) = idx;
-    mask_boundary(idx) = true;
-    connectivity_dist = abs(connectivity - idx);
-    connectivity_dist = min(connectivity_dist,[],2);
-    mask_adjacent_squares = mask_adjacent_squares|connectivity_dist<0.5;
- end
- mask_adjacent_squares = mask_adjacent_squares&~mask_squares;
- mask_adjacent_boundary = connectivity(mask_adjacent_squares,:);
- mask_adjacent_boundary = unique(mask_adjacent_boundary(:));
-
-
-
-mask_outer_nodes = true(num_nodes,1);
-mask_outer_nodes(mask_inner_nodes) = false(1,1);
-
+mask_outer_nodes = ~mask_inner_nodes;
 connectivity = connectivity(~mask_squares,:);
-
-
-%%%%% spliting nodes for infinitely thin  obstacles (like a strip, for example)
-
-node_splitting
-
-
 node_coords_boundary = node_coords(mask_boundary,:);
 node_coords_adjacent = node_coords(mask_adjacent_boundary,:);
 node_coords_outer = node_coords(mask_outer_nodes,:);
